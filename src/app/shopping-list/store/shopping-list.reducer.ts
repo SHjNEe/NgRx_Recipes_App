@@ -39,24 +39,37 @@ export function shoppingListReducer(
         };
       }
     case ShoppingListAction.UPDATE_INGREDIENT:
-      // state.ingredients[action.payload.index] = action.payload.ingredient;
-      const ingredient = state.ingredients[action.payload.index];
-      const updatedIngredient = {
-        ...ingredient,
-        ...action.payload.ingredient,
-      };
+      const ingredient = action.payload;
       const updatedIngredients = [...state.ingredients];
-      updatedIngredient[action.payload.index] = updatedIngredient;
+      updatedIngredients[state.editedIngredientIndex] = ingredient;
       return {
         ...state,
-        ingredient: updatedIngredients,
+        ingredients: [...updatedIngredients],
+        editedIngredientIndex: -1,
+        editedIngredient: null,
       };
     case ShoppingListAction.DELETE_INGREDIENT:
       return {
         ...state,
-        ingredient: state.ingredients.filter((ig, igIndex) => {
-          return igIndex !== action.payload.index;
+        ingredients: state.ingredients.filter((ig, igIndex) => {
+          return igIndex !== state.editedIngredientIndex;
         }),
+        editedIngredientIndex: -1,
+        editedIngredient: null,
+      };
+
+    case ShoppingListAction.START_EDIT:
+      return {
+        ...state,
+        editedIngredientIndex: action.payload,
+        editedIngredient: state.ingredients[action.payload],
+      };
+
+    case ShoppingListAction.STOP_EDIT:
+      return {
+        ...state,
+        editedIngredientIndex: -1,
+        editedIngredient: null,
       };
     default:
       return state;
